@@ -1,0 +1,71 @@
+Configuration:
+  Properties: # 定义全局变量
+    Property: # 缺省配置（用于开发环境）。其他环境需要在VM参数中指定，如下：
+      - name: log.level.console
+        value: info
+      - name: CONTAINER_NAME
+        value: common
+      - name: log.path
+        value: /logs/${CONTAINER_NAME}
+      - name: project.name
+        value: common-service
+      - name: FILE_LOG_PATTERN
+        value: "[TRACEID:%X{TRACE_ID}][%d{yyyy-MM-dd HH:mm:ss.SSS}]-[%-5level]-[%c{36}:%L]-[%m]%n"
+      - name: LOG_PATTERN
+        value: ${FILE_LOG_PATTERN}
+  Appenders:
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      # 控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）
+      ThresholdFilter:
+        level: debug
+        onMatch: ACCEPT
+        onMismatch: DENY
+      PatternLayout:
+        # 日志格式
+        Pattern: "${LOG_PATTERN}"
+    # 输出到文件，超过1024M归档
+    RollingFile:
+      - name: DEFAULT_LOG_FILE
+        ignoreExceptions: false
+        #输出文件地址
+        fileName: ${log.path}/${project.name}-#console#-default.log
+        filePattern: "${log.path}/${project.name}-%d{yyyy-MM-dd}-%i-#console#-default.log"
+        PatternLayout:
+          pattern: "${LOG_PATTERN}"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: "1024 MB"
+          TimeBasedTriggeringPolicy:
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:
+          max: 1000
+  Loggers:
+    Root:
+      level: ${log.level.console}
+      AppenderRef:
+        - ref: CONSOLE
+        - ref: DEFAULT_LOG_FILE
+    Logger:
+      - name: com.donggl.common
+        level: debug
+        additivity: false
+        AppenderRef:
+          # 输出到控制台
+          - ref: CONSOLE
+          # 输出到文件
+          - ref: DEFAULT_LOG_FILE
+      # 打印sql信息
+      - name: com.donggl.common.mapper
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: CONSOLE
+          - ref: DEFAULT_LOG_FILE
+      - name: org.springframework.data.elasticsearch.core
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: CONSOLE
