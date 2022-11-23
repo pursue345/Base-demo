@@ -1,7 +1,7 @@
 package com.donggl.common.service.impl;
 
 import com.donggl.common.entity.User;
-import com.donggl.common.mapper.UserMapper;
+import com.donggl.common.mapper.mysql1.UserMapper;
 import com.donggl.common.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package com.donggl.common.mapper;
+package com.donggl.common.mapper.mysql1;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.donggl.common.entity.TopicInfo;

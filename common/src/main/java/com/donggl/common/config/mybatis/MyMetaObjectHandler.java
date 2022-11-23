@@ -12,7 +12,6 @@ import java.util.Date;
  * @version 1.0
  */
 @Component
-
 public class MyMetaObjectHandler implements MetaObjectHandler {
 
     @Override

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  */
 @Data
-@ConfigurationProperties(prefix = "pool")
+@ConfigurationProperties(prefix = "thread.pool")
 @Component
 
 public class TaskThreadPoolConfig {

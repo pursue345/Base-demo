@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.donggl.common.buffer.TopicInfoPublisher;
 import com.donggl.common.entity.TopicInfo;
-import com.donggl.common.mapper.TopicInfoMapper;
+import com.donggl.common.mapper.mysql1.TopicInfoMapper;
 import com.donggl.common.service.ITopicInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
