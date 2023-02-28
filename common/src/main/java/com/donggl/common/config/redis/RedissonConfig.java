@@ -7,11 +7,11 @@ import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-import org.redisson.Redisson;
-import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
-import org.redisson.spring.data.connection.RedissonConnectionFactory;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+//import org.redisson.Redisson;
+//import org.redisson.api.RedissonClient;
+//import org.redisson.config.Config;
+//import org.redisson.spring.data.connection.RedissonConnectionFactory;
+//import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +33,7 @@ public class RedissonConfig {
 
     private static final String PREFIX = "redis://";
 
-   /* @Bean
+    /*@Bean
     public RedissonClient redisson(RedisRedissonProperties redisRedissonProperties) throws IOException {
         Config config = Config.fromYAML(new ClassPathResource("redisson.yml").getInputStream());
         List<String> clusterNodes = redisRedissonProperties.getCluster().getNodes();
@@ -43,6 +43,11 @@ public class RedissonConfig {
             }
         }
         return Redisson.create(config);
+//        Config config1 = new Config();
+//        // 添加集群地址
+//        ClusterServersConfig clusterServersConfig = config1.useClusterServers()
+//                .addNodeAddress(clusterNodes.toArray(new String[clusterNodes.size()])).setReadMode(ReadMode.MASTER);
+//        return Redisson.create(config1);
     }
 
     @Bean

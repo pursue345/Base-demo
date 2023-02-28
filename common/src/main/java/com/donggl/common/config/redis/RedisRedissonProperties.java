@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
-@ConfigurationProperties(prefix = "spring.redis")
+//@ConfigurationProperties(prefix = "spring.redis")
 public class RedisRedissonProperties {
 
     private Cluster cluster;

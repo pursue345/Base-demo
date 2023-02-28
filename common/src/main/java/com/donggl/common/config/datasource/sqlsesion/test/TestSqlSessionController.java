@@ -38,6 +38,7 @@ public class TestSqlSessionController {
     @GetMapping(value = "/insert")
     public Boolean insertUserList(){
         Type type = new Type();
+        type.setType("1");
         return typeService.save(type);
     }
 }

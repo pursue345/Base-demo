@@ -27,9 +27,9 @@ spring:
 #      nodes:
 #        - 192.168.136.201:6379
     port: 6379
-    host: 192.168.136.201
+    host: 127.0.0.1
     connect-timeout: 6000
-    password: 123456
+    password:
 
     lettuce:
       pool:
@@ -39,6 +39,15 @@ spring:
         max-active: 1000
   main:
     allow-circular-references: true
+  elasticsearch:
+    rest:
+      uris: localhost:9200
+#    password:
+#    uris: localhost:9200
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 
 
 thread:

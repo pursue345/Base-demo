@@ -31,9 +31,24 @@ Configuration:
         ignoreExceptions: false
         #输出文件地址
         fileName: ${log.path}/${project.name}-#console#-default.log
-        filePattern: "${log.path}/${project.name}-%d{yyyy-MM-dd}-%i-#console#-default.log"
+        filePattern: "${log.path}/es-log/${project.name}-%d{yyyy-MM-dd}-%i-#console#-default.log"
         PatternLayout:
           pattern: "${LOG_PATTERN}"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: "1024 MB"
+          TimeBasedTriggeringPolicy:
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:
+          max: 1000
+      - name: LOG_DETAIL_ES
+        ignoreExceptions: false
+        #输出文件地址
+        fileName: ${log.path}/${project.name}/log-etail/#console#-logDetail_es.log
+        filePattern: "${log.path}/${project.name}/log-logDetail/%d{yyyy-MM-dd}-%i-#console#-logDetail_es.log"
+        PatternLayout:
+          pattern: "%msg%n"
         Policies:
           SizeBasedTriggeringPolicy:
             size: "1024 MB"
@@ -69,3 +84,8 @@ Configuration:
         additivity: false
         AppenderRef:
           - ref: CONSOLE
+      - name: LOG_DETAIL_ES_LOG
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: LOG_DETAIL_ES

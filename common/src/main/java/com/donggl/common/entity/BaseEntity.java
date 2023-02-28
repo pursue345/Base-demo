@@ -22,7 +22,7 @@ public class BaseEntity implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @TableField(fill = FieldFill.INSERT)
-    @Excel(name = "信息上传时间", orderNum = "4", width = 10, format = "yyyy-MM-dd HH:mm:ss", isImportField = "true")
+//    @Excel(name = "信息上传时间", orderNum = "4", width = 10, format = "yyyy-MM-dd HH:mm:ss", isImportField = "true")
     private Date createAt;
     /**
      * 创建人
@@ -38,8 +38,6 @@ public class BaseEntity implements Serializable {
     /**
      * 更新人
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private String updateBy;
 
     public Date getCreateAt() {
