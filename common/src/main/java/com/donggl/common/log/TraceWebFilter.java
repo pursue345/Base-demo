@@ -29,7 +29,7 @@ public class TraceWebFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         TraceUtil.initTrace(request.getHeader(TraceUtil.TRACE_ID));
 
-        LoggerUtil.info(logger, "requestId = {}", request.getHeader(TraceUtil.REQUEST_ID));
+        LoggerUtil.info(logger, "requestId = {}", MDC.get(TraceUtil.TRACE_ID));
 
         response.addHeader(TraceUtil.TRACE_ID, MDC.get(TraceUtil.TRACE_ID));
         filterChain.doFilter(request, response);

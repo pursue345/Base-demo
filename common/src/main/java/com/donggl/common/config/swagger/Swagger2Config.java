@@ -105,7 +105,7 @@ public class Swagger2Config {
                 //日期格式转换为字符串显示
                 .directModelSubstitute(LocalTime.class, String.class)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.changan.carbond.controller.test"))
+                .apis(RequestHandlerSelectors.basePackage("com.dongl.common.controller.test"))
                 .paths(PathSelectors.any()).build()
                 .globalOperationParameters(parameters);
     }

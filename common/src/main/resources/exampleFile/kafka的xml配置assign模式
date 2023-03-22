@@ -1,0 +1,43 @@
+<bean id="removeTuserverIdConsumerProperties" class="java.util.HashMap">
+    <constructor-arg>
+        <map>
+            <entry key="bootstrap.servers" value="${kafka.sms.bootstrap.servers}" />
+            <entry key="enable.auto.commit" value="false"/>
+            <entry key="session.timeout.ms" value="15000"/>
+            <entry key="key.deserializer"
+                   value="org.apache.kafka.common.serialization.StringDeserializer" />
+            <entry key="value.deserializer"
+                   value="org.apache.kafka.common.serialization.StringDeserializer" />
+        </map>
+    </constructor-arg>
+</bean>
+
+<!-- 创建consumerFactory bean -->
+<bean id="removeTuserverIdConsumerFactory"
+      class="org.springframework.kafka.core.DefaultKafkaConsumerFactory">
+    <constructor-arg>
+        <ref bean="removeTuserverIdConsumerProperties"/>
+    </constructor-arg>
+</bean>
+
+
+<!--移除节点id消费-->
+<bean id="removeTuServerIdKafkaListener" class="com.donggl.kafka.RemoveTuServerIdKafkaListener"/>
+<bean id="removeIdPartitionsInitialOffset" class="org.springframework.kafka.support.TopicPartitionInitialOffset">
+    <constructor-arg name="topic" value="${kafka.removeId.message.topic}"/>
+    <constructor-arg name="partition" value="${kafka.removeId.message.partition}"/>
+</bean>
+<!--消费者容器配置信息-->
+<bean id="removeTuServerIdContainerProperties"
+      class="org.springframework.kafka.listener.ContainerProperties">
+    <constructor-arg name="topicPartitions" ref="removeIdPartitionsInitialOffset"/>
+    <property name="messageListener" ref="removeTuServerIdKafkaListener"/>
+</bean>
+
+
+<bean id="removeTuServerIdListenerContainer"
+      class="org.springframework.kafka.listener.KafkaMessageListenerContainer"
+      init-method="doStart">
+    <constructor-arg ref="removeTuserverIdConsumerFactory"/>
+    <constructor-arg ref="removeTuServerIdContainerProperties"/>
+</bean>

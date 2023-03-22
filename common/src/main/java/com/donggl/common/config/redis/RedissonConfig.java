@@ -6,12 +6,17 @@ import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 //import org.redisson.Redisson;
 //import org.redisson.api.RedissonClient;
 //import org.redisson.config.Config;
 //import org.redisson.spring.data.connection.RedissonConnectionFactory;
 //import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import io.lettuce.core.RedisURI;
+import io.lettuce.core.cluster.ClusterClientOptions;
+import io.lettuce.core.cluster.RedisClusterClient;
+import io.lettuce.core.resource.ClientResources;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -78,6 +83,38 @@ public class RedissonConfig {
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         return redisTemplate;
     }
+
+    /*@Bean
+    ClusterClientOptions clusterClientOptions(){
+        return ClusterClientOptions.builder().autoReconnect(true).maxRedirects(1).build();
+    }
+
+    *//**
+     * 创建集群客户端
+     *
+     * @param clientResources
+     * @param clusterClientOptions
+     * @return io.lettuce.core.cluster.RedisClusterClient
+     * @author 202109232
+     * @date 2022/10/20 10:45
+     *//*
+    @Bean(name = "redisClusterClient")
+    RedisClusterClient redisClusterClient(RedisRedissonProperties redisRedissonProperties, ClientResources clientResources, ClusterClientOptions clusterClientOptions) {
+        final List<String> nodes = redisRedissonProperties.getCluster().getNodes();
+//        final String password = redisRedissonProperties.getPassword();
+//        final String username = redisRedissonProperties.getUsername();
+        final String password = "";
+        final String username = "";
+        List<RedisURI> nodeList = new ArrayList<>();
+        nodes.forEach(node -> {
+            final String[] nodeArr = node.split(":");
+            nodeList.add(RedisURI.builder().withHost(nodeArr[0]).withPort(Integer.parseInt(nodeArr[1])).build());
+//                    .withAuthentication(username == null ? "" : username, password == null ? "" : password).build());
+        });
+        RedisClusterClient redisClusterClient = RedisClusterClient.create(clientResources, nodeList);
+        redisClusterClient.setOptions(clusterClientOptions);
+        return redisClusterClient;
+    }*/
 }
 
 

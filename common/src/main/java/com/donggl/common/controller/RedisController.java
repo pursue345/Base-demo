@@ -6,6 +6,8 @@ import com.donggl.common.log.LoggerUtil;
 import com.donggl.common.service.ITopicInfoService;
 //import org.redisson.api.RLock;
 //import org.redisson.api.RedissonClient;
+import com.donggl.common.util.MethodExecutor;
+import com.donggl.common.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,4 +117,18 @@ public class RedisController {
             }
         }
     }*/
+
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @PostMapping("testRedisExe")
+    public Boolean testRedisExe(String key) {
+        return MethodExecutor.executeWithRemoteCache(this, o -> o.getById(key), redisUtil, key);
+    }
+
+    private Boolean getById(String str){
+        return "aaa".equals(str)? true:false;
+
+    }
 }

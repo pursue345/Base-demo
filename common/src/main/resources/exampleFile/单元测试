@@ -1,0 +1,415 @@
+单元测试
+
+父pom文件的bulid插件配置
+<build>
+    <!--由pluginManagement统一管理插件的版本，在sub module中无需指定版本号-->
+    <pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M6</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.0.0-M6</version>
+            </plugin>
+        </plugins>
+    </pluginManagement>
+    <plugins>
+        <!--配置maven编译的使用的java版本及编码格式-->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+                <encoding>UTF-8</encoding>
+            </configuration>
+        </plugin>
+        <!--配置单元测试插件-->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+        </plugin>
+        <!--配置单元测试报告插件-->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <configuration>
+                <linkXRef>false</linkXRef>
+            </configuration>
+        </plugin>
+        <!--配置单元测试覆盖率报告插件-->
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.5</version>
+            <executions>
+                <execution>
+                    <id>jacoco-initialize</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>junit-test</id>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
+子模块pom文件引入单测框架
+<dependencies>
+    <!--测试框架-->
+<dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-test</artifactId>
+       <scope>test</scope>
+   </dependency>
+    <!--junit5引擎-->
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+    </dependency>
+
+    <!--springboot 2.2.4版本以后需要依赖，当前是2.2.6-->
+    <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-launcher</artifactId>
+    </dependency>
+
+    <!--升级使用mockito增加静态方法的mock-->
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-inline</artifactId>
+    </dependency>
+    <!--覆盖低版本 -->
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>0.9.11</version>
+    </dependency>
+
+</dependencies>
+Server子模块pom文件的bulid插件配置
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+      </plugins>
+</build>
+
+Facade，api，entity子模块pom文件的bulid插件配置
+<build>
+    <plugins>
+        <!-- 上传源码插件 -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.2.1</version>
+            <executions>
+                <execution>
+                    <id>attach-sources</id>
+                    <goals>
+                        <goal>jar-no-fork</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+            <configuration>
+                <source>8</source>
+                <target>8</target>
+                <encoding>UTF-8</encoding>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
+单测注意事项
+1. 每个类新增一个测试类，例如：Applicate –>ApplicateTest
+2. 使用ExtendWith(MockitoExtendsion.class)注解初始化该测试类
+3. 使用InjectMocks注解将直接依赖的类注入（只能是接口实现类）
+4. 使用Mock注解将DAO，service等一些直接依赖类中依赖的服务打桩
+5. 如果存在mybatis进行LambdaQueryWrapper进行构建条件语句时调用时报错 can not find lambda cache for this entity[类名]，则需要提前构建该实体，方式：
+@BeforeEach
+private void  setUp(){
+    TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(),""),ServiceVersion.class);
+}
+
+Controller范例
+@ExtendWith(MockitoExtension.class)
+public class TestControllerTest {
+
+    //mock controller类
+    @Autowired
+    private MockMvc mockMvc;
+
+    //需要mock的数据
+    @Mock
+    private ITopicInfoService iTopicInfoService;
+
+    //注解需要测试的类
+    @InjectMocks
+    private TestController testController;
+
+    //初始化构建MockMvc
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(testController).build();
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() {
+    }
+
+    @Test
+    void process1() throws Exception {
+        when(iTopicInfoService.getScore(any())).thenReturn(2.0);
+        final MockHttpServletResponse response = mockMvc.perform(post("/test/process1").param("str","1234")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+}
+
+Service功能范例
+@ExtendWith(MockitoExtension.class)
+public class LoCmdServiceImplTest {
+
+    @Mock
+    private LogCarTboxCmdMapper logCarTboxCmdMapper;
+
+    @InjectMocks
+    private LogCarCmdServiceImpl logCarCmdService;
+
+    @Test
+    void tesLogId() {
+        LogCarTboxCmdUpdateDto logCarTboxCmdUpdateDto = new LogCarTboxCmdUpdateDto();
+        logCarTboxCmdUpdateDto.setCmdLogId("123456");
+        logCarTboxCmdUpdateDto.setResultDesc("超时");
+        when(logCarTboxCmdMapper.updateById(any())).thenReturn(0);
+        final boolean b = logCarCmdService.updateCmdStatusByCmdLogId(logCarTboxCmdUpdateDto);
+        assertThat(b);
+    }
+}
+
+Mock被@Value注解字段
+@InjectMocks
+private KafkaConfig kafkConfig;
+
+@Test
+void testKafkaDsptTemplate() {
+    ReflectionTestUtils.setField(kafkaConfig, "bootstrapServers", "123");
+    ReflectionTestUtils.setField(kafkaConfig, "retries", "123");
+    ReflectionTestUtils.setField(kafkaConfig, "bufferMemory", "123");
+    ReflectionTestUtils.setField(kafkaConfig, "groupId", "123");
+    kafkaConfig.kafkaDsptTemplate();
+    assertThatNoException();
+}
+Mock被调用的接口数据
+
+@Mock
+private ICarConditionService mockCarConditionService;
+@Test
+void testGetCarConditionByCarId() throws Exception {
+    // Setup
+    when(mockCarConditionService.getCarConditionByCarId(any())).thenReturn(new Msg<>(0, "msg", new HashMap<>()));
+
+    // Run the test
+    final MockHttpServletResponse response = mockMvc.perform(get("/Condition/getCarId")
+                    .param("carId", "carId")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andReturn().getResponse();
+
+    // Verify the results
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+}
+
+Mock无返回值的方法
+@Mock
+private ThreadPoolGroup threadPoolGroup;
+
+@InjectMocks
+private EventConsumer eventConsumer;
+
+@Test
+public void testOnMessage() {
+    doNothing().when(threadPoolGroup).execute(any(),any(),any());
+    ConsumerRecord consumerRecord = new ConsumerRecord("test",0,0,"123","123");
+    eventConsumer.onMessage(consumerRecord);
+    assertThatNoException();
+}
+
+Mock本地缓存CacheManager
+@Mock
+CacheManager cacheManager;
+
+@Mock
+CarAdapterHttpClient carAdapterHttpClient;
+
+@InjectMocks
+private CarAdapterServiceImpl carAdapterService;
+
+@Test
+void testGetCacheCloudGwVersionIdByCarId() {
+
+    Cache cache = new Cache() {
+        @Override
+        public String getName() {
+            return null;
+        }
+        @Override
+        public Object getNativeCache() {
+            return null;
+        }
+        @Override
+        public ValueWrapper get(Object key) {
+            return null;
+        }
+        @Override
+        public <T> T get(Object key, Class<T> type) {
+            return null;
+        }
+        @Override
+        public <T> T get(Object key, Callable<T> valueLoader) {
+            return null;
+        }
+        @Override
+        public void put(Object key, Object value) {
+        }
+        @Override
+        public void evict(Object key) {
+        }
+        @Override
+        public void clear() {
+        }
+    };
+when(cacheManager.getCache(CacheType.CLOUD_GW_VERSION_ID_NULL.toString())).thenReturn(cache);
+    when(cacheManager.getCache(CacheType.CLOUD_GW_VERSION_ID.toString())).thenReturn(cache);
+    when(carAdapterHttpClient.getCloudGwVersionIdByCarId(any())).thenReturn("123");
+    final String gwVersionIdByCarId = carAdapterService.getCacheCloudGwVersionIdByCarId(any());
+    assertThat(gwVersionIdByCarId).isEqualTo("123");
+
+}
+Mock kafka发送数据
+
+@Mock
+private KafkaTemplate<String, String> kafkaVotCarConditionTemplate;
+@InjectMocks
+private CarConditionServiceImpl carConditionService;
+@Test
+void testSaveCarCondition() {
+    when(kafkaVotCarConditionTemplate.send(any(),any(),any())).thenReturn(new ListenableFuture<SendResult<String, String>>() {
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            return false;
+        }
+        @Override
+        public boolean isCancelled() {
+            return false;
+        }
+        @Override
+        public boolean isDone() {
+            return false;
+        }
+        @Override
+        public SendResult<String, String> get() throws InterruptedException, ExecutionException {
+            return null;
+        }
+        @Override
+        public SendResult<String, String> get(long timeout, @NotNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            return null;
+        }
+        @Override
+        public void addCallback(ListenableFutureCallback<? super SendResult<String, String>> callback) {
+        }
+        @Override
+        public void addCallback(SuccessCallback<? super SendResult<String, String>> successCallback, FailureCallback failureCallback) {
+        }
+    });
+    EventDataDto eventData = new EventDataDto();
+    eventData.setServKey("Et_CarCond");
+    eventData.setMethod("Et_ContiChangedAwaredCond");
+    eventData.setCarId("123");
+    eventData.setTuid("123");
+    carConditionService.saveCarCondition(eventData);
+    assertThatNoException();
+}
+Mock调用facade接口
+@Mock
+private FacadeHolder facadeHolder;
+
+@InjectMocks
+private CarDeviceServiceImpl carDeviceService;
+
+@Test
+void testGetCarConditionByCarId() {
+    when(facadeHolder.getCoreTerminalDeviceDubboService()).thenReturn(new ICoreTerminalDeviceDubboService() {
+        @Override
+        public ApiResult<CommonDeviceDto> getCommonDeviceInfoByTuid(String tuid) {
+            return null;
+        }
+        @Override
+        public ApiResult<ArrayList<FullCoreTerminalDeviceDto>> getCoreTerminalDevicesByVin(String vin) {
+            return null;
+        }
+        @Override
+        public ApiResult<ArrayList<FullCoreTerminalDeviceDto>> getNoObsoleteDeviceByCarId(String carId) {
+            ArrayList<FullCoreTerminalDeviceDto>  list = new ArrayList<>();
+            FullCoreTerminalDeviceDto deviceDto = new FullCoreTerminalDeviceDto();
+            deviceDto.setTuid("123");
+            deviceDto.setPartNumber("PT123");
+            list.add(deviceDto);
+            final ApiResult<ArrayList<FullCoreTerminalDeviceDto>> apiResult = new ApiResult<>();
+            apiResult.setData(list);
+            apiResult.setErrorCode(ErrorCode.SYSTEM.SUCCESS);
+            return apiResult;
+        }
+    });
+    final TerminalDeviceDto terminalDevice
+            = carDeviceService.getTerminalDevice("123", "PT123", "");
+    assertThat(BeanUtil.isNotEmpty(terminalDevice));
+}
+Mock静态方法
+
+//mock 类
+MockedStatic<EncodeUtil> encodeUtilMockedStatic = Mockito.mockStatic(EncodeUtil.class);
+//mock使用静态方法返回值
+encodeUtilMockedStatic.when(()->EncodeUtil.encodeMd5(any())).thenReturn("23456");
+//关流
+encodeUtilMockedStatic.close();
+
+生成本地测试报告
+执行maven的test
+存在单元测试用例的模块，都会生成对应的测试报告，位置：对应模板的/target/site/jacoco/index.html
+

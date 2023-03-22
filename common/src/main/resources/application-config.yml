@@ -56,3 +56,41 @@ thread:
     maxPoolSize: 32
     keepAliveSeconds: 60
     queueCapacity: 100
+
+
+#management:
+#  server:
+#    port: 8080
+#  endpoints:
+#    web:
+#      base-path: /actuator
+#      exposure:
+#        #默认值访问health,info端点，用*包含全部端点
+#        include: "*"
+#  endpoint:
+#    shutdown:
+#      enabled: true
+#    health:
+#      show-details: always
+
+
+
+car:
+  #车况存储配置
+  condition-schedule:
+    # 一次批量存储数据大小
+    batch-size: 10
+    # 队列最大值
+    max-queue-size: 10000
+    # 守护线程检查时间，毫秒
+    batch-check-interval: 100
+    # redis连接池配置
+    jedis-pool-config:
+      #最大空闲连接数
+      max-idle: 300
+      #最大连接数
+      max-total: 5000
+      #最小空闲连接数
+      min-idle: 6
+      #最长等待时间
+      max-wait-MIIlls: 2000

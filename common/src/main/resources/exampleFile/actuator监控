@@ -1,0 +1,27 @@
+Xml:
+
+<!--指标监控与健康检查-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+
+Config：
+management:
+  server:
+    port: 8080
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        #默认值访问health,info端点，用*包含全部端点
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+
+接口：
+{{url}}/上下文/ actuator
