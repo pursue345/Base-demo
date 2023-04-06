@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import springfox.documentation.oas.annotations.EnableOpenApi;
@@ -16,6 +17,8 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
 @EnableOpenApi
+//重试注解
+@EnableRetry
 public class CommonApplication {
 
 	public static void main(String[] args) {
